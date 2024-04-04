@@ -1,0 +1,7 @@
+product:
+  type: lib
+  platforms: [android, iosArm64, iosX64, iosSimulatorArm64 ]
+
+dependencies:
+  - $libs.datastore: exported
+  - $libs.kotlinx.coroutines.core: exported

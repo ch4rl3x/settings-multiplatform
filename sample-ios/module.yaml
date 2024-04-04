@@ -1,0 +1,12 @@
+# Have feedback? Share it here https://surveys.jetbrains.com/s3/Amper-feedback-form
+
+product: ios/app
+
+dependencies:
+  - ../sample-shared
+  - ../settings-datastore
+
+settings:
+  compose: enabled
+  ios:
+    teamId: "BEWRQMAHP2" # See https://developer.apple.com/help/account/manage-your-team/locate-your-team-id/

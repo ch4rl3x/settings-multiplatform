@@ -1,0 +1,8 @@
+product:
+  type: android/app
+
+dependencies:
+  - ../sample-shared
+
+settings:
+  compose: enabled
