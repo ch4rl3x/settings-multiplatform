@@ -2,7 +2,6 @@ package de.charlex.settings.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataMigration
-import androidx.datastore.core.MultiProcessDataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.CoroutineScope
@@ -17,8 +16,8 @@ fun SettingsDataStore.Companion.create(
         scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
 //        security: Security = AESSecurity
 ): SettingsDataStore {
-    if (settingsDataStore == null) {
-        settingsDataStore = SettingsDataStoreImpl(
+    return settingsDataStoreMap.getOrPut(name) {
+        SettingsDataStoreImpl(
             dataStore = createDataStore(
                 migrations = migrations,
                 corruptionHandler = corruptionHandler,
@@ -29,6 +28,5 @@ fun SettingsDataStore.Companion.create(
 //            security = security
         )
     }
-    return settingsDataStore!!
 }
 

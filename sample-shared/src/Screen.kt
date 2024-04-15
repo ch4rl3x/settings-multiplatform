@@ -42,6 +42,14 @@ fun Screen() {
             }) {
                 Text("Set Name to UnknownName")
             }
+
+            Button({
+                coroutineScope.launch {
+                    dataStore.clear()
+                }
+            }) {
+                Text("Clear DataStore")
+            }
         }
     }
 }

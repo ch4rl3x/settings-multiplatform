@@ -21,8 +21,8 @@ fun SettingsDataStore.Companion.create(
         scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
 //        security: Security = AESSecurity
 ): SettingsDataStore {
-    if (settingsDataStore == null) {
-        settingsDataStore = SettingsDataStoreImpl(
+    return settingsDataStoreMap.getOrPut(name) {
+        SettingsDataStoreImpl(
             dataStore = createDataStore(
                 migrations = migrations,
                 corruptionHandler = corruptionHandler,
@@ -34,12 +34,11 @@ fun SettingsDataStore.Companion.create(
                     appropriateForURL = null,
                     create = false,
                     error = null,
-                    )
+                )
                 requireNotNull(documentDirectory).path + "/$name"
             }
 //            security = security
         )
     }
-    return settingsDataStore!!
 }
 

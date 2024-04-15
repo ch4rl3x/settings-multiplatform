@@ -6,11 +6,6 @@ plugins {
     alias(libs.plugins.nexusPublish)
 }
 
-subprojects {
-    group = "de.charlex.settings"
-    version = "2.0.0-alpha01"
-}
-
 nexusPublishing {
     repositories {
         sonatype {

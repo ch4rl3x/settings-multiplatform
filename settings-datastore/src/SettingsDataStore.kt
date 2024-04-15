@@ -22,7 +22,7 @@ interface SettingsDataStore {
 
     companion object {
 
-        internal var settingsDataStore: SettingsDataStore? = null
+        internal val settingsDataStoreMap: MutableMap<String, SettingsDataStore> = mutableMapOf()
         
         /**
          * When using with robolectric, please use
