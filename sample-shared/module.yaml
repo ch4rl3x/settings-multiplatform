@@ -16,4 +16,6 @@ dependencies@android:
   - androidx.appcompat:appcompat:1.6.1: exported
 
 settings:
-  compose: enabled
+  compose:
+    version: 1.6.10
+    enabled: true

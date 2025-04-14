@@ -5,10 +5,5 @@ plugins {
 }
 
 group = "de.charlex.settings"
-version = "2.0.0-alpha03"
+version = "2.0.0-alpha04"
 description = "Kotlin Multiplatform Settings Datastore"
-
-// TODO https://youtrack.jetbrains.com/issue/AMPER-813
-project.extensions.getByType<BaseExtension>().defaultConfig {
-    maxSdk = null
-}

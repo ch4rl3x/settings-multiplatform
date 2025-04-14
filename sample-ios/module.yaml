@@ -7,6 +7,8 @@ dependencies:
   - ../settings-datastore
 
 settings:
-  compose: enabled
+  compose:
+    version: 1.6.10
+    enabled: true
   ios:
     teamId: "BEWRQMAHP2" # See https://developer.apple.com/help/account/manage-your-team/locate-your-team-id/

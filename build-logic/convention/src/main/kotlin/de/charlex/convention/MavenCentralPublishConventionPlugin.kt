@@ -10,8 +10,8 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
-import org.jetbrains.compose.internal.utils.getLocalProperty
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import java.util.Properties
 
 class MavenCentralPublishConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -84,5 +84,19 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
             }
             //endregion
         }
+    }
+}
+
+fun Project.getLocalProperty(key: String): String? {
+    val localPropertiesFile = project.rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        val properties = Properties()
+        localPropertiesFile.inputStream().buffered().use { input ->
+            properties.load(input)
+        }
+        return properties.getProperty(key)
+    } else {
+        localPropertiesFile.createNewFile()
+        return null
     }
 }
