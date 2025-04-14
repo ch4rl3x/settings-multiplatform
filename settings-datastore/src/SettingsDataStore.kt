@@ -1,11 +1,6 @@
 package de.charlex.settings.datastore
 
-import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import androidx.datastore.preferences.core.Preferences
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.SupervisorJob
+import de.charlex.settings.datastore.security.Security
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -32,10 +27,10 @@ interface SettingsDataStore {
          * @see de.charlex.settings.datastore.security.NoOpSecurity
          */
         fun createInMemory(
-//            security: Security = AESSecurity
+            security: Security = AESSecurity
         ): SettingsDataStore {
             return SettingsDataStoreInMemoryImpl(
-//                security = security
+                security = security
             )
         }
     }

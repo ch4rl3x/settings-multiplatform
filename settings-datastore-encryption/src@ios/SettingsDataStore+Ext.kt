@@ -1,22 +1,25 @@
 package de.charlex.settings.datastore
 
-import android.content.Context
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
-import de.charlex.settings.datastore.security.AESSecurity
-import de.charlex.settings.datastore.security.Security
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
+import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSFileManager
+import platform.Foundation.NSURL
+import platform.Foundation.NSUserDomainMask
 
+@OptIn(ExperimentalForeignApi::class)
 fun SettingsDataStore.Companion.create(
-        context: Context,
         name: String = "settings.preferences_pb",
         migrations: List<DataMigration<Preferences>> = listOf(),
         corruptionHandler: ReplaceFileCorruptionHandler<Preferences>? = null,
         scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-        security: Security = AESSecurity
+//        security: Security = AESSecurity
 ): SettingsDataStore {
     return settingsDataStoreMap.getOrPut(name) {
         SettingsDataStoreImpl(
@@ -25,9 +28,16 @@ fun SettingsDataStore.Companion.create(
                 corruptionHandler = corruptionHandler,
                 scope = scope
             ) {
-                context.filesDir.resolve(name).absolutePath
-            },
-            security = security
+                val documentDirectory: NSURL? = NSFileManager.defaultManager.URLForDirectory(
+                    directory = NSDocumentDirectory,
+                    inDomain = NSUserDomainMask,
+                    appropriateForURL = null,
+                    create = false,
+                    error = null,
+                )
+                requireNotNull(documentDirectory).path + "/$name"
+            }
+//            security = security
         )
     }
 }

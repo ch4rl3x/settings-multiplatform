@@ -3,6 +3,7 @@ package de.charlex.settings.datastore
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
+import de.charlex.settings.datastore.security.Security
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,6 +13,7 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
+import security.Security
 
 @OptIn(ExperimentalForeignApi::class)
 fun SettingsDataStore.Companion.create(
@@ -19,7 +21,7 @@ fun SettingsDataStore.Companion.create(
         migrations: List<DataMigration<Preferences>> = listOf(),
         corruptionHandler: ReplaceFileCorruptionHandler<Preferences>? = null,
         scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-//        security: Security = AESSecurity
+        security: Security = AESSecurity
 ): SettingsDataStore {
     return settingsDataStoreMap.getOrPut(name) {
         SettingsDataStoreImpl(
@@ -36,8 +38,8 @@ fun SettingsDataStore.Companion.create(
                     error = null,
                 )
                 requireNotNull(documentDirectory).path + "/$name"
-            }
-//            security = security
+            },
+            security = security
         )
     }
 }
