@@ -61,11 +61,11 @@ fun Screen() {
                     )
                     Button({
                         coroutineScope.launch {
-                            val value = dataStore.get(namePref).firstOrNull() ?: "FakeName"
+                            val value = dataStore.get(namePref).firstOrNull()
                             dataStore.put(namePref, "$value+" )
                         }
                     }) {
-                        Text("Set Name to \"FakeName\" and add +")
+                        Text("Add more and more +")
                     }
 
                     Text("Name: $nameForCompose")
@@ -91,11 +91,11 @@ fun Screen() {
                     )
                     Button({
                         coroutineScope.launch {
-                            val value = dataStore.get(encryptedPref).firstOrNull() ?: "shouldBeEncrypted"
+                            val value = dataStore.get(encryptedPref).firstOrNull()
                             dataStore.put(encryptedPref, "$value+" )
                         }
                     }) {
-                        Text("Set Encrypted to \"shouldBeEncrypted\" and add +")
+                        Text("Add more and more +")
                     }
 
                     Text("Encrypted: $encryptedForCompose")

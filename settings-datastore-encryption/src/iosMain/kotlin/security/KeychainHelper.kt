@@ -1,17 +1,43 @@
-@file:OptIn(kotlinx.cinterop.BetaInteropApi::class)
+package de.charlex.settings.datastore.encryption.security
 
-package de.charlex.settings.datastore.security
-
-import kotlinx.cinterop.*
+import kotlinx.cinterop.COpaquePointer
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.convert
+import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
-import platform.CoreFoundation.*
+import kotlinx.cinterop.value
+import platform.CoreFoundation.CFAutorelease
+import platform.CoreFoundation.CFDictionaryAddValue
+import platform.CoreFoundation.CFDictionaryCreateMutable
+import platform.CoreFoundation.CFDictionaryRef
+import platform.CoreFoundation.CFStringRef
 import platform.CoreFoundation.CFTypeRef
-import platform.Foundation.*
-import platform.Security.*
+import platform.CoreFoundation.CFTypeRefVar
+import platform.CoreFoundation.kCFBooleanTrue
+import platform.Foundation.CFBridgingRelease
+import platform.Foundation.CFBridgingRetain
+import platform.Foundation.NSData
+import platform.Foundation.NSString
+import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.NSUUID
+import platform.Foundation.create
+import platform.Foundation.dataUsingEncoding
+import platform.Security.SecCopyErrorMessageString
+import platform.Security.SecItemAdd
+import platform.Security.SecItemCopyMatching
+import platform.Security.SecItemDelete
+import platform.Security.errSecDuplicateItem
+import platform.Security.errSecItemNotFound
+import platform.Security.errSecParam
+import platform.Security.errSecSuccess
+import platform.Security.kSecAttrAccount
+import platform.Security.kSecAttrService
+import platform.Security.kSecClass
+import platform.Security.kSecClassGenericPassword
+import platform.Security.kSecReturnData
+import platform.Security.kSecValueData
 import platform.darwin.noErr
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.component3
 
 @OptIn(ExperimentalForeignApi::class)
 internal object KeychainHelper {
@@ -30,7 +56,10 @@ internal object KeychainHelper {
             when {
                 status.toUInt() == noErr -> return newAlias
                 status == errSecDuplicateItem -> { /* retry with new alias */ }
-                else -> error("Keychain add failed (cause=${CFBridgingRelease(SecCopyErrorMessageString(status, null)) as? String ?: "Keychain error: $status" }, attempt=$attempt)")
+                else -> error("Keychain add failed (cause=${
+                    CFBridgingRelease(
+                        SecCopyErrorMessageString(status, null)
+                    ) as? String ?: "Keychain error: $status" }, attempt=$attempt)")
             }
         }
         error("Unable to generate unique keychain alias after retries")
@@ -100,9 +129,14 @@ internal object KeychainHelper {
             val resultRef = alloc<CFTypeRefVar>()
             when (val status = SecItemCopyMatching(query, resultRef.ptr)) {
                 errSecSuccess -> {
-                    val data = resultRef.value?.let { CFBridgingRelease(it) } ?: return@retainedScope null
-                    NSString.create(data = data as NSData, encoding = NSUTF8StringEncoding) as String
+                    val data =
+                        resultRef.value?.let { CFBridgingRelease(it) } ?: return@retainedScope null
+                    NSString.Companion.create(
+                        data = data as NSData,
+                        encoding = NSUTF8StringEncoding
+                    ) as String
                 }
+
                 errSecItemNotFound -> null
                 else -> error("Keychain load failed (status=$status)")
             }
@@ -127,7 +161,7 @@ internal object KeychainHelper {
     ) {
         fun queryWithBridgingScope(
             vararg pairs: Pair<CFStringRef?, CFTypeRef?>,
-        ) = kotlin.run {
+        ) = run {
             val finalPairs = refs.entries
                 .map { it.toPair() }
                 .toTypedArray() + pairs
@@ -158,7 +192,7 @@ internal object KeychainHelper {
     ): T {
         val retainedValues = values.map(::CFBridgingRetain)
         return try {
-            val context = BridgingScope(emptyMap<CFStringRef?, CFTypeRef?>())
+            val context = BridgingScope(emptyMap<CFStringRef?, COpaquePointer?>())
             block.invoke(context, retainedValues)
         } finally {
             retainedValues.forEach(::CFBridgingRelease)

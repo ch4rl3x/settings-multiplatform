@@ -1,6 +1,9 @@
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+@file:OptIn(ExperimentalForeignApi::class)
+package de.charlex.settings.datastore.encryption.security
 
-package de.charlex.settings.datastore.security
+import de.charlex.settings.datastore.security.KeyNotFoundException
+import de.charlex.settings.datastore.security.Security
+import kotlinx.cinterop.ExperimentalForeignApi
 
 actual object AESSecurity : Security {
 

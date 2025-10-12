@@ -1,4 +1,4 @@
-package de.charlex.settings.datastore.security
+package de.charlex.settings.datastore.encryption.security
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties.BLOCK_MODE_GCM
@@ -7,6 +7,8 @@ import android.security.keystore.KeyProperties.KEY_ALGORITHM_AES
 import android.security.keystore.KeyProperties.PURPOSE_DECRYPT
 import android.security.keystore.KeyProperties.PURPOSE_ENCRYPT
 import android.util.Base64
+import de.charlex.settings.datastore.security.KeyNotFoundException
+import de.charlex.settings.datastore.security.Security
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
