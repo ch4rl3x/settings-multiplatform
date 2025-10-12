@@ -31,9 +31,13 @@ val encryptedPref = encryptedStringPreference("encrypted", "")
 expect fun rememberSettingsDataStore(): State<SettingsDataStore>
 
 @Composable
+expect fun rememberEncryptedSettingsDataStore(): State<SettingsDataStore>
+
+@Composable
 fun Screen() {
     val dataStore by rememberSettingsDataStore()
-    
+    val encryptedDatastore by rememberEncryptedSettingsDataStore()
+
     val coroutineScope =  rememberCoroutineScope()
     val nameForCompose by dataStore.get(namePref).collectAsState(namePref.defaultValue)
     val encryptedForCompose by dataStore.get(encryptedPref).collectAsState(encryptedPref.defaultValue)
@@ -91,8 +95,8 @@ fun Screen() {
                     )
                     Button({
                         coroutineScope.launch {
-                            val value = dataStore.get(encryptedPref).firstOrNull()
-                            dataStore.put(encryptedPref, "$value+" )
+                            val value = encryptedDatastore.get(encryptedPref).firstOrNull()
+                            encryptedDatastore.put(encryptedPref, "$value+" )
                         }
                     }) {
                         Text("Add more and more +")
@@ -107,9 +111,10 @@ fun Screen() {
             Button({
                 coroutineScope.launch {
                     dataStore.clear()
+                    encryptedDatastore.clear()
                 }
             }) {
-                Text("Clear DataStore")
+                Text("Clear both DataStore")
             }
         }
     }
