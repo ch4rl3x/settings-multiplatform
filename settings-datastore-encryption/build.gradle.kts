@@ -15,8 +15,10 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(project(":settings-datastore"))
+
+                implementation(libs.kotlinx.serialization.json)
                 implementation(compose.runtime)
-                api(libs.datastore)
             }
         }
     }
