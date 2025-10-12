@@ -12,7 +12,7 @@ runs:
 
     - name: Build sample apps
       shell: bash
-      run: ./gradlew -p example assembleRelease
+      run: ./gradlew :sample-app:android-app:assemble
 
     - name: Build dokka
       shell: bash
