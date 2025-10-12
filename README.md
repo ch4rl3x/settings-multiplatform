@@ -5,13 +5,14 @@
 
 Settings Multiplatform is a Koltin Multiplatform wrapper with type safety for the AndroidX Datastore. By using it, you will no longer need to use Strings as keys. Instead, each Preference is represented by an object.
 
-> Settings Multiplatform currently doesn't support Encryption. But it will soon...
+> [!NOTE]
+> Settings Multiplatform now support Encryption.
 
 ## Features
 
 - Type safety for AndroidX DataStore
-- Simple usage for both SharedPrefernces
-- Encryption for SharedPreferences
+- Simple usage
+- (Optional) Save values encrypted for Android and iOS
 
 ## Dependency
 
@@ -19,6 +20,7 @@ Add the library to your module `build.gradle`
 ```gradle
 dependencies {
     implementation 'de.charlex.settings:settings-datastore:<version>'
+    implementation 'de.charlex.settings:settings-datastore-encryption:<version>'
 }
 ```
 
@@ -34,6 +36,14 @@ object Preferences {
     val preferenceLong = longPreference("preference_long", 1L)
     val preferenceBoolean = boolenPreference("preference_boolean", true)
 }
+
+object EncryptedPreferences {
+    val encryptedPreferenceInt = encryptedIntPreference("encrypted_preference_int", 1)
+    val encryptedPreferenceString = encryptedStringPreference("encrypted_preference_string", "default")
+    val encryptedPreferenceFloat = encryptedFloatPreference("encrypted_preference_float", 1.1f)
+    val encryptedPreferenceLong = encryptedLongPreference("encrypted_preference_long", 1L)
+    val encryptedPreferenceBoolean = encryptedBoolenPreference("encrypted_preference_boolean", true)
+}
 ```
 
 ### Using Preferences
@@ -42,14 +52,16 @@ object Preferences {
 ```kotlin
 val settingsDatastore = SettingsDataStore.create(
   context = context,
-  name = "multiplatform-datastore.preferences_pb"
+  name = "multiplatform-datastore.preferences_pb",
+  security = AESSecurity //Optional
 )
 ```
 
 #### src@ios
 ```kotlin
 val settingsDatastore = SettingsDataStore.create(
-  name = "multiplatform-datastore.preferences_pb"
+  name = "multiplatform-datastore.preferences_pb",
+  security = AESSecurity //Optional
 )
 ```
 
@@ -57,10 +69,12 @@ val settingsDatastore = SettingsDataStore.create(
 ```kotlin
 //Read
 val exampleString: Flow<String> = settingsDatastore.get(Preferences.PreferenceString)
+val encryptedExampleString: Flow<String> = settingsDatastore.get(EncryptedPreferences.encryptedPreferenceString)
 
 //Write
 coroutineScope.launch {
   settings.put(Preferences.preferenceString, "my value")
+  settings.put(EncryptedPreferences.encryptedPreferenceString, "shoulb be encrypted")
 }
 
 ```
