@@ -8,7 +8,7 @@ plugins {
 }
 
 mavenPublishConfig {
-    name = "settings-multiplatform-encryption"
+    name = "settings-datastore-encryption"
     description = "An encryption extension for settings-multiplatform"
     url = "https://github.com/ch4rl3x/settings-multiplatform"
 

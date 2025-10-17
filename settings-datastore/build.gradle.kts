@@ -8,7 +8,7 @@ plugins {
 }
 
 mavenPublishConfig {
-    name = "settings-multiplatform"
+    name = "settings-datastore"
     description = "A Kotlin Multiplatform wrapper for AndroidX DataStore with type-safe preferences and optional encryption support."
     url = "https://github.com/ch4rl3x/settings-multiplatform"
 
