@@ -15,13 +15,13 @@ When you migrate logic to a multiplatform structure (Android + iOS / Kotlin Mult
 
 `settings-multiplatform` solves these issues by:
 
-* Exposing preference definitions as typed objects (e.g. stringPreference, intPreference) instead of raw string keys 
+* Exposing preference definitions as typed objects (e.g. `stringPreference`, `intPreference`) instead of raw string keys 
 * Handling both Android and iOS usage through a shared API 
 * Optionally supporting encrypted preferences on supported platforms 
 
 ## 🛠 Key Features
 
-* ✅ Type safety: No more string key typos — you reference Preferences.preferenceString instead of "preference_string" 
+* ✅ Type safety: No more string key typos — you reference `Preferences.preferenceString` instead of `"preference_string"` 
 * ✅ Simple usage API, same interface across platforms 
 * ✅ Optional encryption layer (Android & iOS) for sensitive settings 
 
