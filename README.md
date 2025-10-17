@@ -1,18 +1,29 @@
-# Settings Multiplatform
-
 <a href="https://www.codefactor.io/repository/github/ch4rl3x/settings-multiplatform"><img src="https://www.codefactor.io/repository/github/ch4rl3x/settings-multiplatform/badge" alt="CodeFactor" /></a>
 <a href="https://repo1.maven.org/maven2/de/charlex/settings/settings-datastore/"><img src="https://img.shields.io/maven-central/v/de.charlex.settings/settings-datastore" alt="Maven Central" /></a>
 
-Settings Multiplatform is a Koltin Multiplatform wrapper with type safety for the AndroidX Datastore. By using it, you will no longer need to use Strings as keys. Instead, each Preference is represented by an object.
+# Settings Multiplatform
+
+`settings-multiplatform` provides a type-safe, multiplatform abstraction over AndroidX DataStore, letting you define preferences as objects (rather than string keys), and optionally enabling encryption.
 
 > [!NOTE]
 > Settings Multiplatform now support Encryption in version 2.1.0-beta01
 
-## Features
+## 🔍 What it solves
 
-- Type safety for AndroidX DataStore
-- Simple usage
-- (Optional) Save values encrypted for Android and iOS
+Working with DataStore typically means you operate with string keys and primitive types, which is error-prone and lacks compile-time safety.
+When you migrate logic to a multiplatform structure (Android + iOS / Kotlin Multiplatform), managing platform-specific preferences becomes cumbersome.
+
+`settings-multiplatform` solves these issues by:
+
+* Exposing preference definitions as typed objects (e.g. stringPreference, intPreference) instead of raw string keys 
+* Handling both Android and iOS usage through a shared API 
+* Optionally supporting encrypted preferences on supported platforms 
+
+## 🛠 Key Features
+
+* ✅ Type safety: No more string key typos — you reference Preferences.preferenceString instead of "preference_string" 
+* ✅ Simple usage API, same interface across platforms 
+* ✅ Optional encryption layer (Android & iOS) for sensitive settings 
 
 ## Dependency
 
@@ -78,8 +89,6 @@ coroutineScope.launch {
 }
 
 ```
-
-That's it!
 
 License
 --------
