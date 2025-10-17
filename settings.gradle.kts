@@ -16,7 +16,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name="settings-datastore"
+rootProject.name="settings-multiplatform"
 
 include(":sample-app:android-app")
 include(":sample-app:shared")

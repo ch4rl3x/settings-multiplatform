@@ -7,7 +7,30 @@ plugins {
     id("de.charlex.convention.compose.multiplatform")
 }
 
-description = "Compose Multiplatform userinput cache"
+mavenPublishConfig {
+    name = "settings-multiplatform-encryption"
+    description = "An encryption extension for settings-multiplatform"
+    url = "https://github.com/ch4rl3x/settings-multiplatform"
+
+    scm {
+        connection = "scm:git:github.com/ch4rl3x/settings-multiplatform.git"
+        developerConnection = "scm:git:ssh://github.com/ch4rl3x/settings-multiplatform.git"
+        url = "https://github.com/ch4rl3x/settings-multiplatform/tree/main"
+    }
+
+    developers {
+        developer {
+            id = "ch4rl3x"
+            name = "Alexander Karkossa"
+            email = "alexander.karkossa@googlemail.com"
+        }
+        developer {
+            id = "kalinjul"
+            name = "Julian Kalinowski"
+            email = "julakali@gmail.com"
+        }
+    }
+}
 
 kotlin {
     configureIosTargets()
