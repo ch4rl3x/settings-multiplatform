@@ -6,7 +6,7 @@
 Settings Multiplatform is a Koltin Multiplatform wrapper with type safety for the AndroidX Datastore. By using it, you will no longer need to use Strings as keys. Instead, each Preference is represented by an object.
 
 > [!NOTE]
-> Settings Multiplatform now support Encryption.
+> Settings Multiplatform now support Encryption in version 2.1.0-beta01
 
 ## Features
 
