@@ -6,7 +6,7 @@
 `settings-multiplatform` provides a type-safe, multiplatform abstraction over AndroidX DataStore, letting you define preferences as objects (rather than string keys), and optionally enabling encryption.
 
 > [!NOTE]
-> Settings Multiplatform now support Encryption in version 2.1.0-beta01
+> Settings Multiplatform now support Encryption in version 2.1.0-beta02
 
 ## 🔍 What it solves
 
