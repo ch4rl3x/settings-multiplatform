@@ -29,7 +29,7 @@ fun createDataStore(
 
 class SettingsDataStoreImpl internal constructor(
     val dataStore: DataStore<Preferences>,
-    override val security: Security
+    override val customSecurity: Security?
 ) : SettingsDataStore, SecurityProvider {
 
     override fun <T> get(key: IDataStorePreference<T>): Flow<T> {

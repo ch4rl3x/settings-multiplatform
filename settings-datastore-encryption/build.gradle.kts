@@ -42,6 +42,8 @@ kotlin {
 
                 implementation(libs.kotlinx.serialization.json)
                 implementation(compose.runtime)
+
+                implementation(libs.kotlincrypto.hash.sha2)
             }
         }
     }

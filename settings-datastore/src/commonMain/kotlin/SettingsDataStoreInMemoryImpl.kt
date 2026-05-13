@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.map
 
 @Suppress("UNCHECKED_CAST")
 class SettingsDataStoreInMemoryImpl internal constructor(
-    override val security: Security
+    override val customSecurity: Security?
 ) : SettingsDataStore, SecurityProvider {
 
     private val flows = mutableMapOf<Preferences.Key<*>, MutableStateFlow<*>>()
