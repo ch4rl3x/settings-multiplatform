@@ -1,6 +1,5 @@
 package de.charlex.settings.datastore
 
-import de.charlex.settings.datastore.security.NoOpSecurity
 import de.charlex.settings.datastore.security.Security
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,19 +18,12 @@ interface SettingsDataStore {
     companion object {
 
         internal val settingsDataStoreMap: MutableMap<String, SettingsDataStore> = mutableMapOf()
-        
-        /**
-         * When using with robolectric, please use
-         *
-         * security = NoOpSecurity
-         *
-         * @see de.charlex.settings.datastore.security.NoOpSecurity
-         */
+
         fun createInMemory(
-            security: Security = NoOpSecurity
+            customSecurity: Security? = null
         ): SettingsDataStore {
             return SettingsDataStoreInMemoryImpl(
-                security = security
+                customSecurity = customSecurity
             )
         }
     }

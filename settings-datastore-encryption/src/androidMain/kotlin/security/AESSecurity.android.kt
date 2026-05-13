@@ -15,7 +15,7 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-actual object AESSecurity : Security {
+object AESSecurity : Security {
 
     private val securityKeyAlias = "data-store"
     private val ivLength = 12 // in bytes
@@ -33,7 +33,7 @@ actual object AESSecurity : Security {
 
     private fun createCipher() = Cipher.getInstance("$KEY_ALGORITHM_AES/$BLOCK_MODE_GCM/$ENCRYPTION_PADDING_NONE")
 
-    actual override fun encryptData(lastValue: String?, value: String): String {
+    override fun encryptData(value: String): String {
         if (value.isEmpty()) return value
         val secretKey = getSecretKey(securityKeyAlias) ?: generateSecretKey(securityKeyAlias)
         val cipher = createCipher()
@@ -47,7 +47,7 @@ actual object AESSecurity : Security {
         return combined.encodeBase64()
     }
 
-    actual override fun decryptData(encryptedValue: String): String {
+    override fun decryptData(encryptedValue: String): String {
         if (encryptedValue.isEmpty()) return encryptedValue
         val bytes = try { encryptedValue.decodeBase64() } catch (_: Throwable) { error("Invalid data stored") }
         if (bytes.isEmpty()) error("Invalid data stored")
@@ -59,7 +59,7 @@ actual object AESSecurity : Security {
         }
     }
 
-    actual override fun clear() {
+    override fun clear() {
         //Nothing to do here, as the key is stored in the Android Keystore
     }
 

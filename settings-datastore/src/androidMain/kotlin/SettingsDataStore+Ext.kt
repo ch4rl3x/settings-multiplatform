@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
-import de.charlex.settings.datastore.security.NoOpSecurity
 import de.charlex.settings.datastore.security.Security
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,7 @@ fun SettingsDataStore.Companion.create(
         migrations: List<DataMigration<Preferences>> = listOf(),
         corruptionHandler: ReplaceFileCorruptionHandler<Preferences>? = null,
         scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-        security: Security = NoOpSecurity
+        customSecurity: Security? = null
 ): SettingsDataStore {
     return settingsDataStoreMap.getOrPut(name) {
         SettingsDataStoreImpl(
@@ -27,7 +26,7 @@ fun SettingsDataStore.Companion.create(
             ) {
                 context.filesDir.resolve(name).absolutePath
             },
-            security = security
+            customSecurity = customSecurity
         )
     }
 }
