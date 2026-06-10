@@ -1,15 +1,15 @@
 package de.charlex.settings.datastore
 
 import androidx.datastore.preferences.core.Preferences
-import de.charlex.settings.datastore.security.Security
+import de.charlex.settings.datastore.security.EncryptedStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
 @Suppress("UNCHECKED_CAST")
 class SettingsDataStoreInMemoryImpl internal constructor(
-    override val customSecurity: Security?
-) : SettingsDataStore, SecurityProvider {
+    override val encryptedStore: EncryptedStore
+) : SettingsDataStore, EncrypedStoreProvider {
 
     private val flows = mutableMapOf<Preferences.Key<*>, MutableStateFlow<*>>()
 

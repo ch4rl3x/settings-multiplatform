@@ -17,15 +17,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.charlex.settings.datastore.SettingsDataStore
-import de.charlex.settings.datastore.encryption.encryptedStringPreference
-import de.charlex.settings.datastore.encryption.get
-import de.charlex.settings.datastore.encryption.put
+import de.charlex.settings.datastore.encryptedFloatPreference
+import de.charlex.settings.datastore.encryptedStringPreference
+import de.charlex.settings.datastore.get
+import de.charlex.settings.datastore.put
 import de.charlex.settings.datastore.stringPreference
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 val namePref = stringPreference("name", "")
 val encryptedPref = encryptedStringPreference("encrypted", "")
+
+val encryptedFloatPref = encryptedFloatPreference("encryptedFloat", 0.99f)
 
 @Composable
 expect fun rememberSettingsDataStore(): State<SettingsDataStore>
@@ -38,6 +42,7 @@ fun Screen() {
     val coroutineScope =  rememberCoroutineScope()
     val nameForCompose by dataStore.get(namePref).collectAsState(namePref.defaultValue)
     val encryptedForCompose by dataStore.get(encryptedPref).collectAsState(encryptedPref.defaultValue)
+    val encryptedFloatForCompose by dataStore.get(encryptedFloatPref).collectAsState(encryptedFloatPref.defaultValue)
 
     LazyColumn(
         modifier = Modifier.statusBarsPadding(),
@@ -100,6 +105,17 @@ fun Screen() {
                     }
 
                     Text("Encrypted: $encryptedForCompose")
+
+                    Button({
+                        coroutineScope.launch {
+                            val value = dataStore.get(encryptedFloatPref).first()
+                            dataStore.put(encryptedFloatPref, value + 0.01f  )
+                        }
+                    }) {
+                        Text("Add 0.01f")
+                    }
+
+                    Text("Encrypted Float: $encryptedFloatForCompose")
                 }
             }
         }

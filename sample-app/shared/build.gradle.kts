@@ -16,7 +16,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(project(":settings-datastore"))
-                implementation(project(":settings-datastore-encryption"))
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
@@ -31,7 +30,6 @@ kotlin {
             isStatic = true
             baseName = "shared"
             export("de.charlex.settings:settings-datastore")
-            export("de.charlex.settings:settings-datastore-encryption")
         }
     }
 //    addParcelizeAnnotation("de.publicvalue.multiplatform.oidc.sample.screens.CommonParcelize")

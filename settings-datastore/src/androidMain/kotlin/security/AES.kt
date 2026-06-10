@@ -1,4 +1,4 @@
-package de.charlex.settings.datastore.encryption.security
+package de.charlex.settings.datastore.security
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties.BLOCK_MODE_GCM
@@ -7,15 +7,14 @@ import android.security.keystore.KeyProperties.KEY_ALGORITHM_AES
 import android.security.keystore.KeyProperties.PURPOSE_DECRYPT
 import android.security.keystore.KeyProperties.PURPOSE_ENCRYPT
 import android.util.Base64
-import de.charlex.settings.datastore.security.KeyNotFoundException
-import de.charlex.settings.datastore.security.Security
 import java.security.KeyStore
+import javax.crypto.AEADBadTagException
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-object AESSecurity : Security {
+object AES {
 
     private val securityKeyAlias = "data-store"
     private val ivLength = 12 // in bytes
@@ -33,23 +32,23 @@ object AESSecurity : Security {
 
     private fun createCipher() = Cipher.getInstance("$KEY_ALGORITHM_AES/$BLOCK_MODE_GCM/$ENCRYPTION_PADDING_NONE")
 
-    override fun encryptData(value: String): String {
+    fun encryptData(value: ByteArray): ByteArray {
         if (value.isEmpty()) return value
         val secretKey = getSecretKey(securityKeyAlias) ?: generateSecretKey(securityKeyAlias)
         val cipher = createCipher()
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
         val iv = cipher.iv.copyOf()
-        val ciphertext = cipher.doFinal(value.toByteArray(Charsets.UTF_8)) // enthält Ciphertext+Tag
+        val ciphertext = cipher.doFinal(value) // enthält Ciphertext+Tag
         val combined = ByteArray(1 + iv.size + ciphertext.size)
         combined[0] = versionGcm
         iv.copyInto(combined, 1)
         ciphertext.copyInto(combined, 1 + iv.size)
-        return combined.encodeBase64()
+        return combined
     }
 
-    override fun decryptData(encryptedValue: String): String {
+    fun decryptData(encryptedValue: ByteArray): ByteArray {
         if (encryptedValue.isEmpty()) return encryptedValue
-        val bytes = try { encryptedValue.decodeBase64() } catch (_: Throwable) { error("Invalid data stored") }
+        val bytes = try { encryptedValue } catch (_: Throwable) { error("Invalid data stored") }
         if (bytes.isEmpty()) error("Invalid data stored")
         return when (bytes[0]) {
             versionGcm -> decryptV1(bytes)
@@ -59,40 +58,50 @@ object AESSecurity : Security {
         }
     }
 
-    override fun clear() {
-        //Nothing to do here, as the key is stored in the Android Keystore
-    }
-
-    private fun decryptV1(bytes: ByteArray): String {
+    private fun decryptV1(bytes: ByteArray): ByteArray {
         if (bytes.size < 1 + ivLength + 1) error("Invalid data stored")
         val iv = bytes.copyOfRange(1, 1 + ivLength)
         val cipherText = bytes.copyOfRange(1 + ivLength, bytes.size)
         val secretKey = getSecretKey(securityKeyAlias) ?: throw KeyNotFoundException("Could not find key with key alias $securityKeyAlias")
         val cipher = createCipher()
         cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(tagLength, iv))
-        return cipher.doFinal(cipherText).toString(Charsets.UTF_8)
+        return cipher.doFinal(cipherText)
     }
 
-    private fun decryptLegacy(bytes: ByteArray): String {
+    private fun decryptLegacy(bytes: ByteArray): ByteArray {
         if (bytes.size < ivLength + 1) error("Invalid data stored")
         val iv = bytes.copyOfRange(0, ivLength)
         val cipherText = bytes.copyOfRange(ivLength, bytes.size)
         val secretKey = getSecretKey(securityKeyAlias) ?: throw KeyNotFoundException("Could not find key with key alias $securityKeyAlias")
         val cipher = createCipher()
         cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(tagLength, iv))
-        return cipher.doFinal(cipherText).toString(Charsets.UTF_8)
+        return cipher.doFinal(cipherText)
     }
 
-    private fun generateSecretKey(keyAlias: String): SecretKey =
-        keyGenerator.apply {
-            init(
-                KeyGenParameterSpec
-                    .Builder(keyAlias, PURPOSE_ENCRYPT or PURPOSE_DECRYPT)
-                    .setBlockModes(BLOCK_MODE_GCM)
-                    .setEncryptionPaddings(ENCRYPTION_PADDING_NONE)
-                    .build()
-            )
-        }.generateKey()
+    private fun generateSecretKey(keyAlias: String): SecretKey {
+        fun spec(keySize: Int? = null): KeyGenParameterSpec {
+            val builder = KeyGenParameterSpec
+                .Builder(keyAlias, PURPOSE_ENCRYPT or PURPOSE_DECRYPT)
+                .setBlockModes(BLOCK_MODE_GCM)
+                .setEncryptionPaddings(ENCRYPTION_PADDING_NONE)
+
+            if (keySize != null) {
+                builder.setKeySize(keySize)
+            }
+
+            return builder.build()
+        }
+
+        return try {
+            keyGenerator.apply {
+                init(spec(256))
+            }.generateKey()
+        } catch (e: Exception) {
+            keyGenerator.apply {
+                init(spec())
+            }.generateKey()
+        }
+    }
 
     private fun getSecretKey(keyAlias: String): SecretKey? =
         (keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry?)?.secretKey
