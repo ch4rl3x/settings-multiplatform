@@ -1,4 +1,4 @@
-package de.charlex.settings.datastore.encryption
+package de.charlex.settings.datastore
 
 import androidx.datastore.preferences.core.Preferences
 

@@ -1,8 +1,6 @@
 package de.charlex.settings.datastore
 
-import de.charlex.settings.datastore.security.Security
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 interface SettingsDataStore {
 
@@ -19,19 +17,10 @@ interface SettingsDataStore {
 
         internal val settingsDataStoreMap: MutableMap<String, SettingsDataStore> = mutableMapOf()
 
-        fun createInMemory(
-            customSecurity: Security? = null
-        ): SettingsDataStore {
+        fun createInMemory(): SettingsDataStore {
             return SettingsDataStoreInMemoryImpl(
-                customSecurity = customSecurity
+                encryptedStore = NonEncryptedInMemoryStore()
             )
         }
-    }
-}
-
-inline fun <reified T : Enum<T>> SettingsDataStore.get(pref: IDataStoreEnumPreference<T>): Flow<T> {
-    val preference = stringPreference(pref.preferenceKey.name, pref.defaultValue.name)
-    return get(preference).map { prefValue ->
-        enumValues<T>().find { it.name == prefValue } ?: pref.defaultValue
     }
 }

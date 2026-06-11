@@ -3,10 +3,10 @@
 
 # Settings Multiplatform
 
-`settings-multiplatform` provides a type-safe, multiplatform abstraction over AndroidX DataStore, letting you define preferences as objects (rather than string keys), and optionally enabling encryption.
+`settings-multiplatform` provides a type-safe, multiplatform abstraction over AndroidX DataStore, letting you define preferences as objects (rather than string keys), and enabling encryption.
 
 > [!NOTE]
-> Settings Multiplatform now support Encryption in version 2.1.0-beta02
+> Settings Multiplatform now support Encryption in version 2.3.0+
 
 ## 🔍 What it solves
 
@@ -17,13 +17,15 @@ When you migrate logic to a multiplatform structure (Android + iOS / Kotlin Mult
 
 * Exposing preference definitions as typed objects (e.g. `stringPreference`, `intPreference`) instead of raw string keys 
 * Handling both Android and iOS usage through a shared API 
-* Optionally supporting encrypted preferences on supported platforms 
+* Supporting encrypted preferences on supported platforms 
 
 ## 🛠 Key Features
 
 * ✅ Type safety: No more string key typos — you reference `Preferences.preferenceString` instead of `"preference_string"` 
 * ✅ Simple usage API, same interface across platforms 
-* ✅ Optional encryption layer (Android & iOS) for sensitive settings 
+* ✅ Secure storage layer for sensitive settings on Android & iOS 
+  * Android: AES-256-GCM where supported, with fallback to AES-GCM, using Android Keystore-backed keys  
+  * iOS: Secure storage via Keychain
 
 ## Dependency
 
@@ -31,7 +33,6 @@ Add the library to your module `build.gradle`
 ```gradle
 dependencies {
     implementation 'de.charlex.settings:settings-datastore:<version>'
-    implementation 'de.charlex.settings:settings-datastore-encryption:<version>'
 }
 ```
 

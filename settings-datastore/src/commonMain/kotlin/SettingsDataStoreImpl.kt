@@ -6,7 +6,7 @@ import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import de.charlex.settings.datastore.security.Security
+import de.charlex.settings.datastore.security.EncryptedStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -29,8 +29,8 @@ fun createDataStore(
 
 class SettingsDataStoreImpl internal constructor(
     val dataStore: DataStore<Preferences>,
-    override val customSecurity: Security?
-) : SettingsDataStore, SecurityProvider {
+    override val encryptedStore: EncryptedStore
+) : SettingsDataStore, EncrypedStoreProvider {
 
     override fun <T> get(key: IDataStorePreference<T>): Flow<T> {
         return dataStore.data.map {

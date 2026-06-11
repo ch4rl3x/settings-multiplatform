@@ -9,7 +9,7 @@ plugins {
 
 mavenPublishConfig {
     name = "settings-datastore"
-    description = "A Kotlin Multiplatform wrapper for AndroidX DataStore with type-safe preferences and optional encryption support."
+    description = "A Kotlin Multiplatform wrapper for AndroidX DataStore with type-safe preferences and encryption."
     url = "https://github.com/ch4rl3x/settings-multiplatform"
 
     scm {
@@ -40,6 +40,9 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 api(libs.datastore)
+                implementation(libs.kotlinx.serialization.json)
+
+                implementation(libs.kotlincrypto.hash.sha2)
             }
         }
     }
