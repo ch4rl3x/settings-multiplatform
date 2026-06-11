@@ -65,7 +65,9 @@ object EncryptedPreferences {
 val settingsDatastore = SettingsDataStore.create(
   context = context,
   name = "multiplatform-datastore.preferences_pb",
-  security = AESSecurity //Optional
+  encryptedStore = {
+    AESEncryptedStore(it)
+  }
 )
 ```
 
@@ -73,7 +75,15 @@ val settingsDatastore = SettingsDataStore.create(
 ```kotlin
 val settingsDatastore = SettingsDataStore.create(
   name = "multiplatform-datastore.preferences_pb",
-  security = AESSecurity //Optional
+  encryptedStore = {
+    KeychainStore(
+      dataStore = it,
+      keychain = Keychain(
+        appGroup = "group.xxx",
+        service = NSBundle.mainBundle.bundleIdentifier
+      )
+    )
+  }
 )
 ```
 
