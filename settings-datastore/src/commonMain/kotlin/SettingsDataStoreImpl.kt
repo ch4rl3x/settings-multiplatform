@@ -63,6 +63,8 @@ class SettingsDataStoreImpl internal constructor(
     }
 
     override suspend fun clear() {
+        encryptedStore.clear()
+
         dataStore.edit {
             it.clear()
         }

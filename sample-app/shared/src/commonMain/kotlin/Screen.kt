@@ -126,7 +126,7 @@ fun Screen() {
                     dataStore.clear()
                 }
             }) {
-                Text("Clear both DataStore")
+                Text("Clear DataStore")
             }
         }
     }

@@ -9,5 +9,7 @@ interface EncryptedStore {
     fun get(pref: IDataStoreEncryptedPreference<*>): Flow<ByteArray?>
 
     suspend fun remove(pref: IDataStoreEncryptedPreference<*>)
+
+    suspend fun clear()
 }
 

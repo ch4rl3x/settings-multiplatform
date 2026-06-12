@@ -1,6 +1,7 @@
 package de.charlex.settings.datastore
 
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import de.charlex.settings.datastore.security.EncryptedStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,5 +26,9 @@ class NonEncryptedInMemoryStore: EncryptedStore {
 
     override suspend fun remove(pref: IDataStoreEncryptedPreference<*>) {
         flows.remove(pref.preferenceKey)
+    }
+
+    override suspend fun clear() {
+        flows.clear()
     }
 }

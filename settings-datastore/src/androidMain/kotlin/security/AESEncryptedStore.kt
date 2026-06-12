@@ -52,4 +52,10 @@ class AESEncryptedStore(val dataStore: DataStore<Preferences>): EncryptedStore {
             settings.remove(key)
         }
     }
+
+    override suspend fun clear() {
+        dataStore.edit {
+            it.clear()
+        }
+    }
 }
