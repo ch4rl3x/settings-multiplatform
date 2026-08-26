@@ -75,17 +75,82 @@ val settingsDatastore = SettingsDataStore.create(
 ```kotlin
 val settingsDatastore = SettingsDataStore.create(
   name = "multiplatform-datastore.preferences_pb",
+  // Applies to every keychain item of this store (add, update, read and delete)
+  keychainOptions = KeychainOptions(
+    accessibility = KeychainAccessibility.AfterFirstUnlockThisDeviceOnly
+  ),
   encryptedStore = {
     KeychainStore(
       dataStore = it,
       keychain = Keychain(
         appGroup = "group.xxx",
-        service = NSBundle.mainBundle.bundleIdentifier
+        service = NSBundle.mainBundle.bundleIdentifier,
+        defaultOptions = KeychainOptions(
+          accessibility = KeychainAccessibility.AfterFirstUnlockThisDeviceOnly
+        )
       )
     )
   }
 )
 ```
+
+### Keychain options (iOS)
+
+The Security framework uses the same dictionary shape for very different purposes, which makes it
+easy to configure a keychain item incorrectly:
+
+| Call | Dictionary | Contains |
+|---|---|---|
+| `SecItemAdd` | `attributes` | identity **+ item attributes + value** |
+| `SecItemUpdate` | `query` | identity **only** |
+| `SecItemUpdate` | `attributesToUpdate` | item attributes **+ value** |
+| `SecItemCopyMatching` | `query` | identity + return/match options |
+| `SecItemDelete` | `query` | identity |
+
+An attribute such as `kSecAttrAccessible` is an **item attribute**. If it is only written on
+`SecItemAdd`, an already existing item keeps its old protection class forever, because
+`SecItemUpdate` never receives it. If it is written into a *search* dictionary instead, every lookup
+starts to fail with `errSecItemNotFound`.
+
+`KeychainOptions` separates identity from item attributes and puts every entry into the correct
+dictionary:
+
+```kotlin
+KeychainOptions(
+  // identity / search attributes – used by add, update, read and delete
+  baseQueryItems = listOf(kSecAttrSynchronizable to kCFBooleanFalse),
+  // item attributes – written on SecItemAdd AND on SecItemUpdate
+  itemAttributes = listOf(kSecAttrLabel to "My App Token"),
+  // convenience for kSecAttrAccessible (also written on add AND update)
+  accessibility = KeychainAccessibility.AfterFirstUnlockThisDeviceOnly,
+  // call specific escape hatches
+  addQueryItems = emptyList(),
+  updateQueryItems = emptyList(),
+  updateAttributes = emptyList(),
+  readQueryItems = emptyList(),
+  deleteQueryItems = emptyList(),
+)
+```
+
+Options can be configured on three levels and are merged in this order (later wins):
+
+1. `Keychain(defaultOptions = …)` / `SettingsDataStore.create(keychainOptions = …)` – whole store
+2. `KeychainStore(defaultOptions = …)`
+3. `SystemOptions` of a single preference
+
+```kotlin
+val token = encryptedStringPreference(
+  name = "token",
+  defaultValue = "",
+  options = SystemOptions(accessibility = KeychainAccessibility.WhenPasscodeSetThisDeviceOnly)
+)
+```
+
+> **Migration note:** `kSecAttrAccessible` entries that were previously passed via
+> `keychainAddQueryItems` (or `keychainBaseQueryItems`) keep working – protection attributes are
+> always detected and routed to the add *and* update dictionaries, and they are never used as search
+> attributes. `applyUpdatableAttributesOnUpdate = false` only disables forwarding of the remaining
+> updatable attributes (e.g. `kSecAttrLabel`).
 
 #### Usage
 ```kotlin

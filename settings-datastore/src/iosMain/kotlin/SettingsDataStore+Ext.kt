@@ -6,6 +6,7 @@ import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
 import de.charlex.settings.datastore.security.EncryptedStore
 import de.charlex.settings.datastore.security.Keychain
+import de.charlex.settings.datastore.security.KeychainOptions
 import de.charlex.settings.datastore.security.KeychainStore
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
@@ -18,16 +19,17 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
 
+@OptIn(ExperimentalForeignApi::class)
 fun SettingsDataStore.Companion.create(
     name: String = "settings.preferences_pb",
     dataStore: DataStore<Preferences>,
+    keychainOptions: KeychainOptions = KeychainOptions.Default,
     encryptedStore: (DataStore<Preferences>) -> EncryptedStore = {
         KeychainStore(
             dataStore = it,
             keychain = Keychain(
-                service = NSBundle.mainBundle.bundleIdentifier
-                    ?.let { "$it.settings.datastore.keychain" }
-                    ?: "de.charlex.settings.datastore.keychain"
+                service = defaultKeychainService(),
+                defaultOptions = keychainOptions,
             )
         )
     }
@@ -40,6 +42,14 @@ fun SettingsDataStore.Companion.create(
     }
 }
 
+
+/**
+ * Default keychain service identifier: `<bundleIdentifier>.settings.datastore.keychain`.
+ */
+private fun defaultKeychainService(): String =
+    NSBundle.mainBundle.bundleIdentifier
+        ?.let { "$it.settings.datastore.keychain" }
+        ?: "de.charlex.settings.datastore.keychain"
 
 @OptIn(ExperimentalForeignApi::class)
 fun SettingsDataStore.Companion.create(
@@ -57,16 +67,8 @@ fun SettingsDataStore.Companion.create(
         )
         requireNotNull(documentDirectory).path + "/$name"
     },
-    encryptedStore: (DataStore<Preferences>) -> EncryptedStore = {
-        KeychainStore(
-            dataStore = it,
-            keychain = Keychain(
-                service = NSBundle.mainBundle.bundleIdentifier
-                    ?.let { "$it.settings.datastore.keychain" }
-                    ?: "de.charlex.settings.datastore.keychain"
-            )
-        )
-    }
+    keychainOptions: KeychainOptions = KeychainOptions.Default,
+    encryptedStore: ((DataStore<Preferences>) -> EncryptedStore)? = null,
 ): SettingsDataStore {
     val dataStore = createDataStore(
         migrations = migrations,
@@ -77,6 +79,15 @@ fun SettingsDataStore.Companion.create(
     return create(
         name = name,
         dataStore = dataStore,
-        encryptedStore = encryptedStore
+        keychainOptions = keychainOptions,
+        encryptedStore = encryptedStore ?: {
+            KeychainStore(
+                dataStore = it,
+                keychain = Keychain(
+                    service = defaultKeychainService(),
+                    defaultOptions = keychainOptions,
+                )
+            )
+        }
     )
 }
