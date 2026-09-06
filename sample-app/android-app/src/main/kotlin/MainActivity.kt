@@ -1,6 +1,3 @@
-package de.charlex.settings.sample
-
-import Screen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent

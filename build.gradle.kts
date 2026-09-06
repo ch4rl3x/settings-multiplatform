@@ -1,30 +1,16 @@
-// build.gradle.kts
-import org.jetbrains.compose.internal.utils.getLocalProperty
-import java.net.URI
-
 plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.android.library) apply false
+    // AGP and KGP: the conventions compile against them but leave the version to
+    // this build. com.android.application comes from the same AGP artifact.
+    alias(conventions.plugins.android.library) apply false
+    alias(conventions.plugins.kmp) apply false
+    alias(conventions.plugins.compose.compiler) apply false
     alias(libs.plugins.composeMultiplatform) apply false
-    alias(libs.plugins.compose.compiler) apply false
-    alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.kmp) apply false
-    alias(libs.plugins.dokka)
-    alias(libs.plugins.nexusPublish)
+
+    alias(conventions.plugins.convention.publishing.repository)
+    alias(conventions.plugins.convention.kmp.library) apply false
+    alias(conventions.plugins.convention.publishing) apply false
 }
 
 subprojects {
     group = "de.charlex.settings"
-}
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
-            stagingProfileId.set(getLocalProperty("SONATYPE_STAGING_PROFILE_ID") ?: System.getenv("SONATYPE_STAGING_PROFILE_ID"))
-            username.set(getLocalProperty("OSSRH_USERNAME") ?: System.getenv("OSSRH_USERNAME"))
-            password.set(getLocalProperty("OSSRH_PASSWORD") ?: System.getenv("OSSRH_PASSWORD"))
-        }
-    }
 }

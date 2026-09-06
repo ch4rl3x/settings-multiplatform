@@ -1,0 +1,10 @@
+name: Publish Release
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  release:
+    uses: ch4rl3x/maven-central-publish-pipeline/.github/workflows/release.yml@v1
+    secrets: inherit

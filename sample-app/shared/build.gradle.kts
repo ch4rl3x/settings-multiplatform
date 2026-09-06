@@ -1,17 +1,18 @@
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import de.charlex.convention.config.configureIosTargets
 
 plugins {
-    id("de.charlex.convention.android.library")
-    id("de.charlex.convention.kotlin.multiplatform")
-    id("de.charlex.convention.kotlin.multiplatform.mobile")
-    id("de.charlex.convention.compose.multiplatform")
+    alias(conventions.plugins.convention.kmp.library)
+    alias(libs.plugins.composeMultiplatform)
+    alias(conventions.plugins.compose.compiler)
 }
 
 kotlin {
-    configureIosTargets()
+    androidLibrary {
+        namespace = "de.charlex.settings.sample.shared"
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -26,15 +27,13 @@ kotlin {
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {
-        binaries.withType<Framework> {
+        // framework, not withType<Framework>: the convention plugin only declares
+        // the targets, so there is no framework binary to configure yet.
+        binaries.framework {
             isStatic = true
             baseName = "shared"
             export("de.charlex.settings:settings-datastore")
         }
     }
 //    addParcelizeAnnotation("de.publicvalue.multiplatform.oidc.sample.screens.CommonParcelize")
-}
-
-android {
-    namespace = "org.publicvalue.multiplatform.oidc.sample.shared"
 }

@@ -1,0 +1,25 @@
+name: Publish Snapshot
+
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  checks: write # required for test-reporter
+
+jobs:
+  snapshot:
+    uses: ch4rl3x/maven-central-publish-pipeline/.github/workflows/kmp-snapshot.yml@v1
+    with:
+      sample-tasks: ':sample-app:android-app:assemble'
+    secrets: inherit

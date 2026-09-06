@@ -1,6 +1,4 @@
 pluginManagement {
-    includeBuild("gradle/build-logic")
-
     repositories {
         mavenCentral()
         google()
@@ -14,6 +12,12 @@ dependencyResolutionManagement {
         mavenCentral()
         google()
     }
+
+    versionCatalogs {
+        create("conventions") {
+            from("de.charlex.conventions.kmp:catalog:2.2.0")
+        }
+    }
 }
 
 rootProject.name="settings-multiplatform"
@@ -21,5 +25,3 @@ rootProject.name="settings-multiplatform"
 include(":sample-app:android-app")
 include(":sample-app:shared")
 include(":settings-datastore")
-
-//enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

@@ -1,10 +1,8 @@
-import de.charlex.convention.config.configureIosTargets
-
 plugins {
-    id("de.charlex.convention.android.library")
-    id("de.charlex.convention.kotlin.multiplatform.mobile")
-    id("de.charlex.convention.centralPublish")
-    id("de.charlex.convention.compose.multiplatform")
+    alias(conventions.plugins.convention.kmp.library)
+    alias(conventions.plugins.convention.publishing)
+    alias(libs.plugins.composeMultiplatform)
+    alias(conventions.plugins.compose.compiler)
 }
 
 mavenPublishConfig {
@@ -33,7 +31,9 @@ mavenPublishConfig {
 }
 
 kotlin {
-    configureIosTargets()
+    androidLibrary {
+        namespace = "de.charlex.settings.datastore"
+    }
 
     sourceSets {
         commonMain {
